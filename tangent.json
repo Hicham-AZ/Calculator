@@ -1,0 +1,131 @@
+{
+  "name": "Calculator",
+  "description": "A Java Swing-based calculator application with advanced theming support and both standard and scientific calculation modes.",
+  "version": "1.0.0",
+  "language": "Java",
+  "framework": "Swing",
+  "license": "MIT",
+  "author": "HouariZegai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HouariZegai/Calculator.git"
+  },
+  "documentation": {
+    "root": "docs/",
+    "main": "docs/index.mdx",
+    "format": "mdx"
+  },
+  "features": [
+    "Standard Calculator Mode",
+    "Scientific Calculator Mode", 
+    "YAML-based Theming System",
+    "Light and Dark Themes",
+    "Runtime Theme Switching",
+    "Decimal Number Support",
+    "Negative Number Support",
+    "Chain Operations",
+    "Input Validation",
+    "Cross-platform Compatibility"
+  ],
+  "technologies": {
+    "runtime": "Java 11+",
+    "build": "Maven",
+    "testing": "JUnit 5",
+    "configuration": "Jackson YAML",
+    "ui": "Java Swing"
+  },
+  "structure": {
+    "src": {
+      "main": {
+        "java": "Source code",
+        "resources": "Configuration files"
+      },
+      "test": {
+        "java": "Unit tests"
+      }
+    },
+    "docs": "Documentation files",
+    "screenshots": "Application screenshots",
+    "pom.xml": "Maven build configuration"
+  },
+  "getting_started": {
+    "prerequisites": ["Java 11+", "Maven (optional)"],
+    "install": "git clone https://github.com/HouariZegai/Calculator.git",
+    "run": "mvn compile exec:java -Dexec.mainClass=\"com.houarizegai.calculator.App\"",
+    "test": "mvn test"
+  },
+  "api": {
+    "main_class": "com.houarizegai.calculator.App",
+    "ui_class": "com.houarizegai.calculator.ui.CalculatorUI",
+    "theme_loader": "com.houarizegai.calculator.theme.ThemeLoader",
+    "utilities": ["com.houarizegai.calculator.util.ColorUtil"]
+  },
+  "configuration": {
+    "themes": "src/main/resources/application.yaml",
+    "format": "YAML",
+    "hot_reload": false
+  },
+  "operations": {
+    "basic": ["+", "-", "*", "/", "%"],
+    "scientific": ["√", "^", "ln"],
+    "utility": ["C", "←", "."]
+  },
+  "themes": {
+    "built_in": ["Light", "Dark"],
+    "customizable": true,
+    "properties": [
+      "applicationBackground",
+      "textColor", 
+      "operatorBackground",
+      "numbersBackground",
+      "btnEqualTextColor",
+      "btnEqualBackground"
+    ]
+  },
+  "testing": {
+    "framework": "JUnit 5",
+    "coverage": "Parameterized tests for core calculations",
+    "location": "src/test/java/",
+    "run": "mvn test"
+  },
+  "build": {
+    "tool": "Maven",
+    "java_version": "11",
+    "compile": "mvn compile",
+    "package": "mvn package",
+    "clean": "mvn clean"
+  },
+  "deployment": {
+    "type": "Desktop Application",
+    "platforms": ["Windows", "macOS", "Linux"],
+    "requirements": "Java 11+ Runtime Environment"
+  },
+  "maintenance": {
+    "code_style": "Standard Java conventions",
+    "architecture": "Layered architecture with UI/Business/Data layers",
+    "patterns": ["Factory Pattern", "Observer Pattern", "DTO Pattern"]
+  },
+  "extensions": {
+    "possible": [
+      "Keyboard input support",
+      "Calculation history",
+      "Memory functions (M+, M-, MR, MC)",
+      "Additional scientific functions",
+      "Custom theme editor",
+      "Copy/paste functionality"
+    ]
+  },
+  "issues": {
+    "known": [
+      "No calculation history",
+      "Limited scientific functions",
+      "No keyboard input support"
+    ],
+    "reporting": "GitHub Issues"
+  },
+  "contributing": {
+    "guide": "Open to contributions via pull requests",
+    "issues": "Report bugs and feature requests on GitHub",
+    "development": "Fork, develop, test, submit PR"
+  }
+}

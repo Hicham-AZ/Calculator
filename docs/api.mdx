@@ -1,0 +1,534 @@
+# API Reference
+
+This document provides detailed API documentation for the Calculator application's classes and methods.
+
+## Core Classes
+
+### App
+
+The main entry point for the Calculator application.
+
+#### Package
+`com.houarizegai.calculator`
+
+#### Class Declaration
+```java
+public class App {
+    public static void main(String[] args)
+}
+```
+
+#### Methods
+
+##### main(String[] args)
+**Description**: Application entry point that creates and displays the calculator UI.
+
+**Parameters**:
+- `args` - Command line arguments (currently unused)
+
+**Returns**: `void`
+
+**Example**:
+```java
+public static void main(String[] args) {
+    new CalculatorUI();
+}
+```
+
+---
+
+### CalculatorUI
+
+The main UI component that handles all calculator functionality, display, and user interactions.
+
+#### Package
+`com.houarizegai.calculator.ui`
+
+#### Class Declaration
+```java
+public class CalculatorUI {
+    // Instance variables and methods
+}
+```
+
+#### Constants
+
+```java
+private static final String FONT_NAME = "Comic Sans MS";
+private static final String DOUBLE_OR_NUMBER_REGEX = "([-]?\\d+[.]\\d*)|(\\d+)|(-\\d+)";
+private static final String APPLICATION_TITLE = "Calculator";
+private static final int WINDOW_WIDTH = 410;
+private static final int WINDOW_HEIGHT = 600;
+private static final int BUTTON_WIDTH = 80;
+private static final int BUTTON_HEIGHT = 70;
+private static final int MARGIN_X = 20;
+private static final int MARGIN_Y = 60;
+```
+
+#### Instance Variables
+
+```java
+private final JFrame window;                    // Main application window
+private JComboBox<String> comboCalculatorType;  // Calculator mode selector
+private JComboBox<String> comboTheme;          // Theme selector
+private JTextField inputScreen;                 // Display screen
+private JButton btn0, btn1, ..., btn9;         // Number buttons
+private JButton btnAdd, btnSub, btnMul, btnDiv; // Basic operator buttons
+private JButton btnMod, btnEqual, btnC, btnBack; // Special function buttons
+private JButton btnRoot, btnPower, btnLog;      // Scientific function buttons
+private JButton btnPoint;                       // Decimal point button
+
+private char selectedOperator = ' ';            // Currently selected operator
+private boolean go = true;                      // Ready for next calculation
+private boolean addToDisplay = true;            // Append to display flag
+private double typedValue = 0;                  // Stored operand value
+private final Map<String, Theme> themesMap;     // Available themes
+```
+
+#### Constructor
+
+##### CalculatorUI()
+**Description**: Creates and initializes the calculator UI with all components and event handlers.
+
+**Side Effects**:
+- Creates main window with specified dimensions
+- Loads and applies default theme
+- Initializes all UI components
+- Sets up event listeners
+- Makes window visible
+
+**Example**:
+```java
+CalculatorUI calculator = new CalculatorUI();
+// Calculator window is now visible and functional
+```
+
+#### Public Methods
+
+##### calculate(double, double, char)
+**Description**: Performs mathematical operations on two numbers.
+
+**Parameters**:
+- `firstNumber` - The first operand
+- `secondNumber` - The second operand  
+- `operator` - The operation to perform (`+`, `-`, `*`, `/`, `%`, `^`)
+
+**Returns**: `double` - The result of the calculation
+
+**Supported Operations**:
+- `'+'` - Addition
+- `'-'` - Subtraction  
+- `'*'` - Multiplication
+- `'/'` - Division
+- `'%'` - Modulus (remainder)
+- `'^'` - Power (exponentiation)
+- Default - Returns second number for unsupported operations
+
+**Examples**:
+```java
+CalculatorUI calc = new CalculatorUI();
+
+double result1 = calc.calculate(5.0, 3.0, '+');  // Returns 8.0
+double result2 = calc.calculate(10.0, 2.0, '/'); // Returns 5.0  
+double result3 = calc.calculate(2.0, 8.0, '^');  // Returns 256.0
+double result4 = calc.calculate(7.0, 3.0, '%');  // Returns 1.0
+```
+
+**Special Cases**:
+- Division by zero returns `Infinity`
+- Invalid operators return the second number
+- Negative number support for all operations
+
+#### Private Methods
+
+##### initInputScreen(int[], int[])
+**Description**: Initializes the calculator's input display screen.
+
+**Parameters**:
+- `columns` - Array of x-coordinates for component positioning
+- `rows` - Array of y-coordinates for component positioning
+
+**Side Effects**:
+- Creates and configures the input text field
+- Sets initial display value to "0"
+- Adds component to main window
+
+##### initButtons(int[], int[])
+**Description**: Creates and configures all calculator buttons with their event handlers.
+
+**Parameters**:
+- `columns` - Array of x-coordinates for button positioning
+- `rows` - Array of y-coordinates for button positioning
+
+**Side Effects**:
+- Creates all number buttons (0-9)
+- Creates all operator buttons (+, -, *, /, %, =)
+- Creates function buttons (C, ←, √, pow, ln, .)
+- Adds event listeners to all buttons
+- Adds buttons to main window
+
+##### initCalculatorTypeSelector()
+**Description**: Creates the dropdown for switching between Standard and Scientific modes.
+
+**Side Effects**:
+- Creates combo box with "Standard" and "Scientific" options
+- Adds event listener for mode switching
+- Adjusts window size based on selected mode
+- Shows/hides scientific function buttons
+
+##### initThemeSelector()  
+**Description**: Creates the theme selection dropdown and applies default theme.
+
+**Side Effects**:
+- Populates dropdown with available themes from configuration
+- Adds event listener for theme changes
+- Applies first available theme as default
+
+##### applyTheme(Theme)
+**Description**: Applies a theme to all UI components.
+
+**Parameters**:
+- `theme` - The Theme object containing color configuration
+
+**Side Effects**:
+- Updates background colors for all components
+- Updates text colors for all components  
+- Updates the main window background
+- Repaints the UI with new colors
+
+##### createButton(String, int, int)
+**Description**: Factory method for creating standardized calculator buttons.
+
+**Parameters**:
+- `label` - The text to display on the button
+- `x` - X coordinate for button position
+- `y` - Y coordinate for button position
+
+**Returns**: `JButton` - Configured button ready for use
+
+**Configuration Applied**:
+- Sets button bounds to standard size (80x70px)
+- Sets font to Comic Sans MS, 28pt
+- Sets hand cursor on hover
+- Makes button non-focusable
+- Adds button to main window
+
+##### createComboBox(String[], int, int, String)
+**Description**: Factory method for creating standardized combo boxes.
+
+**Parameters**:
+- `items` - Array of options for the combo box
+- `x` - X coordinate for position
+- `y` - Y coordinate for position  
+- `toolTip` - Tooltip text for the combo box
+
+**Returns**: `JComboBox<String>` - Configured combo box
+
+**Configuration Applied**:
+- Sets bounds to standard size (140x25px)
+- Sets tooltip text
+- Sets hand cursor
+- Adds to main window
+
+---
+
+### Theme
+
+Data model representing a visual theme configuration.
+
+#### Package
+`com.houarizegai.calculator.theme.properties`
+
+#### Class Declaration
+```java
+public class Theme {
+    // Properties and getter/setter methods
+}
+```
+
+#### Properties
+
+```java
+private String name;                    // Theme display name
+private String applicationBackground;   // Main window background color
+private String textColor;              // Primary text color
+private String btnEqualTextColor;      // Equals button text color
+private String operatorBackground;     // Operator button background color
+private String numbersBackground;      // Number button background color  
+private String btnEqualBackground;     // Equals button background color
+```
+
+#### Methods
+
+All properties have standard JavaBean getter and setter methods:
+
+```java
+public String getName()
+public void setName(String name)
+
+public String getApplicationBackground()
+public void setApplicationBackground(String applicationBackground)
+
+// ... similar patterns for all properties
+```
+
+---
+
+### ThemeList
+
+Container class for managing multiple themes loaded from configuration.
+
+#### Package
+`com.houarizegai.calculator.theme.properties`
+
+#### Class Declaration
+```java
+public class ThemeList {
+    private List<Theme> themes;
+}
+```
+
+#### Methods
+
+##### getThemes()
+**Description**: Returns the list of all available themes.
+
+**Returns**: `List<Theme>` - All loaded themes
+
+##### setThemes(List<Theme>)
+**Description**: Sets the list of themes (used during YAML deserialization).
+
+**Parameters**:
+- `themes` - List of Theme objects
+
+##### getThemesAsMap()
+**Description**: Converts the theme list to a map for easy lookup by name.
+
+**Returns**: `Map<String, Theme>` - Map with theme names as keys
+
+**Example**:
+```java
+ThemeList themeList = // ... loaded from YAML
+Map<String, Theme> themeMap = themeList.getThemesAsMap();
+Theme darkTheme = themeMap.get("Dark");
+```
+
+---
+
+### ThemeLoader
+
+Utility class for loading themes from YAML configuration files.
+
+#### Package
+`com.houarizegai.calculator.theme`
+
+#### Class Declaration
+```java
+public class ThemeLoader {
+    // Static utility methods only
+}
+```
+
+#### Constructor
+```java
+private ThemeLoader() {
+    throw new AssertionError("Constructor is not allowed");
+}
+```
+**Note**: Constructor is private to prevent instantiation of utility class.
+
+#### Static Methods
+
+##### loadThemes()
+**Description**: Loads all themes from the application.yaml configuration file.
+
+**Returns**: `Map<String, Theme>` - Map of theme names to Theme objects
+
+**Error Handling**: Returns empty map if loading fails
+
+**File Location**: `src/main/resources/application.yaml`
+
+**Example**:
+```java
+Map<String, Theme> themes = ThemeLoader.loadThemes();
+Theme lightTheme = themes.get("Light");
+if (lightTheme != null) {
+    // Use the theme
+}
+```
+
+**Implementation Details**:
+- Uses Jackson ObjectMapper with YAML factory
+- Reads from file system path relative to project root
+- Gracefully handles IOException by returning empty map
+- Automatically registers Jackson modules for proper deserialization
+
+---
+
+### ColorUtil
+
+Utility class for color conversion and manipulation.
+
+#### Package  
+`com.houarizegai.calculator.util`
+
+#### Class Declaration
+```java
+public class ColorUtil {
+    // Static utility methods only
+}
+```
+
+#### Constructor
+```java
+private ColorUtil() {
+    throw new AssertionError("Constructor is not allowed");
+}
+```
+
+#### Static Methods
+
+##### hex2Color(String)
+**Description**: Converts a 6-digit hexadecimal color string to a Java Color object.
+
+**Parameters**:
+- `colorHex` - 6-character hex color string (without #)
+
+**Returns**: `Color` - Java Color object, or null if input is invalid
+
+**Format Requirements**:
+- Exactly 6 characters
+- Valid hexadecimal characters (0-9, A-F, a-f)
+- No '#' prefix
+- Case insensitive
+
+**Examples**:
+```java
+Color red = ColorUtil.hex2Color("ff0000");     // Red
+Color green = ColorUtil.hex2Color("00FF00");   // Green  
+Color blue = ColorUtil.hex2Color("0000ff");    // Blue
+Color black = ColorUtil.hex2Color("000000");   // Black
+Color white = ColorUtil.hex2Color("ffffff");   // White
+Color invalid = ColorUtil.hex2Color(null);     // Returns null
+```
+
+**Error Handling**:
+- Returns `null` for null input
+- May throw `NumberFormatException` for invalid hex digits
+- May throw `StringIndexOutOfBoundsException` for incorrect length
+
+## Constants and Configuration
+
+### Regular Expressions
+
+#### DOUBLE_OR_NUMBER_REGEX
+```java
+private static final String DOUBLE_OR_NUMBER_REGEX = 
+    "([-]?\\d+[.]\\d*)|(\\d+)|(-\\d+)";
+```
+
+**Purpose**: Validates numeric input for calculations
+
+**Matches**:
+- Positive integers: `123`
+- Negative integers: `-456`  
+- Positive decimals: `12.34`
+- Negative decimals: `-56.78`
+
+**Usage**: Used in button event handlers to validate user input before processing
+
+### UI Constants
+
+```java
+private static final int WINDOW_WIDTH = 410;    // Standard mode width
+private static final int WINDOW_HEIGHT = 600;   // Window height
+private static final int BUTTON_WIDTH = 80;     // Standard button width
+private static final int BUTTON_HEIGHT = 70;    // Standard button height
+```
+
+### Font Configuration
+```java
+private static final String FONT_NAME = "Comic Sans MS";
+// Used for all buttons (28pt) and input screen (33pt)
+```
+
+## Event Handling Patterns
+
+### Number Button Events
+```java
+btnX.addActionListener(event -> {
+    if (addToDisplay) {
+        if (Pattern.matches("[0]*", inputScreen.getText())) {
+            inputScreen.setText("X");
+        } else {
+            inputScreen.setText(inputScreen.getText() + "X");
+        }
+    } else {
+        inputScreen.setText("X");
+        addToDisplay = true;
+    }
+    go = true;
+});
+```
+
+### Operator Button Events  
+```java
+btnOperator.addActionListener(event -> {
+    if (!Pattern.matches(DOUBLE_OR_NUMBER_REGEX, inputScreen.getText()))
+        return;
+
+    if (go) {
+        typedValue = calculate(typedValue, 
+            Double.parseDouble(inputScreen.getText()), 
+            selectedOperator);
+        inputScreen.setText(formatResult(typedValue));
+        selectedOperator = 'X';
+        go = false;
+        addToDisplay = false;
+    } else {
+        selectedOperator = 'X';
+    }
+});
+```
+
+### Special Function Events
+```java
+btnFunction.addActionListener(event -> {
+    if (!Pattern.matches(DOUBLE_OR_NUMBER_REGEX, inputScreen.getText()))
+        return;
+
+    if (go) {
+        typedValue = performFunction(Double.parseDouble(inputScreen.getText()));
+        inputScreen.setText(formatResult(typedValue));
+        selectedOperator = 'F';
+        addToDisplay = false;
+    }
+});
+```
+
+## Error Codes and Exceptions
+
+### Common Exceptions
+
+#### IOException (ThemeLoader)
+**Cause**: YAML file not found or not readable  
+**Handling**: Returns empty map, application continues with default colors
+
+#### NumberFormatException (ColorUtil)  
+**Cause**: Invalid hex color format
+**Handling**: Should be caught by caller, may result in null Color
+
+#### StringIndexOutOfBoundsException (ColorUtil)
+**Cause**: Hex color string not exactly 6 characters
+**Handling**: Should be caught by caller, may result in runtime error
+
+### Validation Patterns
+
+#### Input Validation
+All numeric input is validated against `DOUBLE_OR_NUMBER_REGEX` before processing.
+
+#### State Validation  
+Button event handlers check calculation state (`go`, `addToDisplay`) before performing operations.
+
+#### Theme Validation
+Theme loading includes error handling to prevent application crashes from invalid configuration.

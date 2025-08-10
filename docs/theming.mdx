@@ -1,0 +1,358 @@
+# Theming System
+
+The Calculator application features a comprehensive theming system that allows you to customize the visual appearance of the entire interface.
+
+## Overview
+
+The theming system is built around YAML configuration files and provides:
+
+- **Runtime Theme Switching**: Change themes without restarting the application
+- **Complete Customization**: Every visual element can be themed
+- **Easy Configuration**: Simple YAML-based theme definitions
+- **Extensible Design**: Add new themes by editing configuration files
+
+## Theme Configuration
+
+### Configuration File Location
+Themes are defined in `src/main/resources/application.yaml`
+
+### Theme Structure
+```yaml
+themes:
+  - name: Theme Name
+    applicationBackground: hex_color
+    textColor: hex_color
+    operatorBackground: hex_color
+    numbersBackground: hex_color
+    btnEqualTextColor: hex_color
+    btnEqualBackground: hex_color
+```
+
+## Built-in Themes
+
+### Light Theme
+Perfect for well-lit environments and users who prefer bright interfaces.
+
+```yaml
+- name: Light
+  applicationBackground: f0f3f9  # Light gray-blue
+  textColor: "000000"           # Black text
+  operatorBackground: f7f9fc    # Very light blue  
+  numbersBackground: ffffff     # Pure white
+  btnEqualTextColor: ffffff     # White text
+  btnEqualBackground: 0067c0    # Blue background
+```
+
+**Visual Characteristics:**
+- Clean, professional appearance
+- High contrast for excellent readability
+- Subtle blue tinting for visual appeal
+- White number buttons for clarity
+
+### Dark Theme
+Ideal for low-light conditions and users who prefer darker interfaces.
+
+```yaml
+- name: Dark
+  applicationBackground: 1c2028  # Dark gray
+  textColor: ffffff             # White text
+  operatorBackground: 2d333d    # Medium dark gray
+  numbersBackground: 363c47     # Lighter dark gray
+  btnEqualTextColor: ffffff     # White text
+  btnEqualBackground: 4cc2ff    # Light blue
+```
+
+**Visual Characteristics:**
+- Easy on the eyes in dark environments  
+- Reduced eye strain for extended use
+- Modern, sleek appearance
+- High contrast maintained for accessibility
+
+## Theme Properties Reference
+
+### applicationBackground
+**Type**: Hex Color (6 digits, no #)  
+**Purpose**: Sets the main window background color  
+**Affects**: Window background, combo box backgrounds, input field background
+
+**Examples:**
+```yaml
+applicationBackground: f0f3f9  # Light theme
+applicationBackground: 1c2028  # Dark theme
+```
+
+### textColor  
+**Type**: Hex Color (6 digits, no #)  
+**Purpose**: Sets the primary text color for most UI elements  
+**Affects**: All button text (except equals), combo box text, input field text
+
+**Examples:**
+```yaml
+textColor: "000000"  # Black (use quotes for pure black)
+textColor: ffffff    # White
+```
+
+### operatorBackground
+**Type**: Hex Color (6 digits, no #)  
+**Purpose**: Background color for operator buttons (+, -, *, /, %, etc.)  
+**Affects**: All mathematical operation buttons, Clear, Backspace, scientific functions
+
+**Examples:**
+```yaml
+operatorBackground: f7f9fc  # Light blue-gray
+operatorBackground: 2d333d  # Dark gray
+```
+
+### numbersBackground
+**Type**: Hex Color (6 digits, no #)  
+**Purpose**: Background color for number buttons and decimal point  
+**Affects**: Buttons 0-9 and decimal point button
+
+**Examples:**
+```yaml
+numbersBackground: ffffff   # Pure white
+numbersBackground: 363c47   # Dark gray
+```
+
+### btnEqualTextColor
+**Type**: Hex Color (6 digits, no #)  
+**Purpose**: Text color specifically for the equals button  
+**Affects**: Only the equals button text
+
+**Examples:**
+```yaml
+btnEqualTextColor: ffffff   # White text
+```
+
+### btnEqualBackground
+**Type**: Hex Color (6 digits, no #)  
+**Purpose**: Background color specifically for the equals button  
+**Affects**: Only the equals button background
+
+**Examples:**
+```yaml
+btnEqualBackground: 0067c0  # Blue
+btnEqualBackground: 4cc2ff  # Light blue
+```
+
+## Creating Custom Themes
+
+### Step 1: Choose Colors
+Select colors that provide good contrast and visual appeal:
+
+```yaml
+# Example: Forest theme
+- name: Forest
+  applicationBackground: 2d4a3e  # Dark green
+  textColor: ffffff             # White text  
+  operatorBackground: 3d5a4e    # Medium green
+  numbersBackground: 4d6a5e     # Light green
+  btnEqualTextColor: ffffff     # White text
+  btnEqualBackground: 1a7a3e    # Bright green
+```
+
+### Step 2: Add to Configuration
+Edit `src/main/resources/application.yaml` and add your theme to the themes array:
+
+```yaml
+themes:
+  - name: Light
+    # ... existing light theme
+  - name: Dark  
+    # ... existing dark theme
+  - name: Forest  # Your new theme
+    applicationBackground: 2d4a3e
+    textColor: ffffff
+    operatorBackground: 3d5a4e
+    numbersBackground: 4d6a5e
+    btnEqualTextColor: ffffff
+    btnEqualBackground: 1a7a3e
+```
+
+### Step 3: Test Your Theme
+1. Recompile and run the application
+2. Select your new theme from the dropdown
+3. Test all calculator functions to ensure readability
+
+## Color Format Guidelines
+
+### Hex Color Format
+- **Format**: 6-digit hexadecimal (RGB)
+- **No Hash**: Don't include the '#' symbol  
+- **Case Insensitive**: Both uppercase and lowercase work
+- **Pure Black**: Use quotes `"000000"` to prevent YAML parsing issues
+
+**Valid Examples:**
+```yaml
+applicationBackground: ff0000    # Red
+applicationBackground: 00FF00    # Green  
+applicationBackground: 0000ff    # Blue
+applicationBackground: "000000"  # Black (quoted)
+```
+
+**Invalid Examples:**
+```yaml
+applicationBackground: #ff0000   # Don't include #
+applicationBackground: red       # No color names
+applicationBackground: rgb(255,0,0) # No RGB format
+```
+
+### Color Accessibility Guidelines
+
+#### Contrast Recommendations
+- **Text on Background**: Minimum 4.5:1 contrast ratio
+- **Large Text**: Minimum 3:1 contrast ratio  
+- **Focus Indicators**: Should be clearly visible
+
+#### Testing Contrast
+Use online contrast checkers to validate your color combinations:
+1. WebAIM Contrast Checker
+2. Colour Contrast Analyser  
+3. WAVE Web Accessibility Evaluator
+
+## Theme Loading Process
+
+### Loading Sequence
+1. **Application Start**: `ThemeLoader.loadThemes()` is called
+2. **YAML Parsing**: Jackson library parses the configuration file
+3. **Object Creation**: `Theme` objects are created from YAML data
+4. **Map Generation**: Themes are converted to a `Map<String, Theme>`
+5. **UI Population**: Theme dropdown is populated with available themes
+6. **Default Application**: First theme is applied automatically
+
+### Error Handling
+```java
+public static Map<String, Theme> loadThemes() {
+    try {
+        ThemeList themeList = mapper.readValue(
+            new File("src/main/resources/application.yaml"), 
+            ThemeList.class);
+        return themeList.getThemesAsMap();
+    } catch (IOException e) {
+        return Collections.emptyMap(); // Graceful fallback
+    }
+}
+```
+
+**Fallback Behavior:**
+- If YAML loading fails, calculator uses default Swing colors
+- Application continues to function normally
+- Error is handled silently to prevent crashes
+
+## Advanced Theming
+
+### Dynamic Theme Creation
+While not built-in, you could extend the system to create themes programmatically:
+
+```java
+// Example extension (not implemented)
+Theme customTheme = new Theme();
+customTheme.setName("Custom");
+customTheme.setApplicationBackground("ff0000");
+// ... set other properties
+```
+
+### Theme Validation
+Consider adding validation for color values:
+
+```java
+// Example validation logic (not implemented)
+public boolean isValidHexColor(String color) {
+    return color != null && 
+           color.length() == 6 && 
+           color.matches("[0-9A-Fa-f]{6}");
+}
+```
+
+### Runtime Theme Modification
+Current implementation loads themes at startup. For runtime modification:
+
+1. Monitor YAML file for changes
+2. Reload themes when file is modified  
+3. Update UI without restart
+
+## Troubleshooting Themes
+
+### Common Issues
+
+#### Theme Not Appearing in Dropdown
+**Cause**: YAML syntax error or file not found  
+**Solution**: 
+1. Validate YAML syntax
+2. Ensure `application.yaml` is in `src/main/resources/`
+3. Check application console for error messages
+
+#### Colors Not Applying
+**Cause**: Invalid hex color format  
+**Solution**:
+1. Ensure hex colors are exactly 6 characters
+2. Don't include '#' symbol
+3. Use quotes around "000000" for pure black
+
+#### Application Crashes on Theme Switch
+**Cause**: Null color values or parsing errors  
+**Solution**:
+1. Validate all required theme properties are present
+2. Check for typos in property names
+3. Ensure hex color format is correct
+
+#### Poor Readability  
+**Cause**: Insufficient contrast between text and background  
+**Solution**:
+1. Test color combinations with contrast checkers
+2. Ensure minimum 4.5:1 contrast ratio
+3. Test theme in different lighting conditions
+
+### Debug Mode
+To debug theme loading, you can add logging:
+
+```java
+// Add to ThemeLoader.loadThemes() method
+System.out.println("Loading themes from: " + 
+    new File("src/main/resources/application.yaml").getAbsolutePath());
+```
+
+## Best Practices
+
+### Theme Design
+1. **Consistency**: Use consistent color relationships across themes
+2. **Accessibility**: Maintain good contrast ratios
+3. **Testing**: Test themes in different lighting conditions
+4. **Naming**: Use descriptive theme names
+
+### File Management
+1. **Backup**: Keep backup copies of working theme configurations
+2. **Version Control**: Track theme changes in version control
+3. **Documentation**: Document custom theme color choices
+4. **Validation**: Test YAML syntax before deploying
+
+### Performance
+1. **Color Caching**: Colors are cached by the JVM automatically
+2. **Minimal Objects**: Theme objects are lightweight
+3. **One-time Loading**: Themes loaded once at startup
+
+## Future Enhancements
+
+### Potential Features
+- **Theme Editor**: GUI for creating themes
+- **Import/Export**: Save/load individual themes
+- **User Themes**: Per-user theme storage
+- **Dynamic Loading**: Hot-reload themes without restart
+- **Color Picker**: Visual color selection interface
+- **Theme Preview**: Preview themes before applying
+
+### Implementation Ideas
+```java
+// Future enhancement examples
+public class ThemeEditor {
+    public Theme createTheme(String name) { ... }
+    public void exportTheme(Theme theme, File file) { ... }  
+    public Theme importTheme(File file) { ... }
+}
+
+public class ThemeManager {
+    public void saveUserTheme(Theme theme) { ... }
+    public List<Theme> getUserThemes() { ... }
+    public void hotReloadThemes() { ... }
+}
+```

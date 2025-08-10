@@ -1,0 +1,580 @@
+# Testing Guide
+
+This document provides comprehensive information about testing the Calculator application, including existing tests, testing strategies, and guidelines for writing new tests.
+
+## Testing Overview
+
+The Calculator project uses **JUnit 5** for unit testing with a focus on:
+- **Parameterized Testing**: Testing multiple input combinations efficiently
+- **Core Logic Testing**: Validating calculation accuracy
+- **Isolated Testing**: Testing calculation logic independently from UI
+- **Comprehensive Coverage**: Testing edge cases and boundary conditions
+
+## Test Structure
+
+### Test Location
+```
+src/test/java/com/houarizegai/calculator/
+└── CalculatorUITest.java
+```
+
+### Dependencies
+```xml
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-params</artifactId>
+    <version>5.9.2</version>
+    <scope>test</scope>
+</dependency>
+```
+
+## Existing Tests
+
+### CalculatorUITest
+
+#### Package
+`com.houarizegai.calculator`
+
+#### Class Declaration
+```java
+class CalculatorUITest {
+    private CalculatorUI calculatorUI;
+    
+    @BeforeEach
+    void setUp() {
+        calculatorUI = new CalculatorUI();
+    }
+}
+```
+
+#### Test Methods
+
+##### testCalculation (Parameterized)
+**Description**: Tests the core calculation logic with multiple operation types and values.
+
+```java
+@ParameterizedTest
+@CsvSource({
+    "3,5,+,8", 
+    "2,8,-,-6", 
+    "44.5,10,*,445", 
+    "320,5,/,64", 
+    "3,5,%,3", 
+    "5,3,^,125"
+})
+void testCalculation(double firstNumber, double secondNumber, 
+                     char operator, double expectedResult) {
+    assertEquals(expectedResult, 
+        calculatorUI.calculate(firstNumber, secondNumber, operator));
+}
+```
+
+**Test Cases Covered**:
+1. **Addition**: `3 + 5 = 8`
+2. **Subtraction**: `2 - 8 = -6` (tests negative results)
+3. **Multiplication**: `44.5 * 10 = 445` (tests decimal operations)
+4. **Division**: `320 / 5 = 64`
+5. **Modulus**: `3 % 5 = 3`
+6. **Power**: `5 ^ 3 = 125`
+
+## Running Tests
+
+### Using Maven
+
+#### Run All Tests
+```bash
+mvn test
+```
+
+#### Run Specific Test Class
+```bash
+mvn test -Dtest=CalculatorUITest
+```
+
+#### Run with Verbose Output
+```bash
+mvn test -Dtest=CalculatorUITest -DforkCount=0
+```
+
+#### Generate Test Report
+```bash
+mvn surefire-report:report
+# Report generated in target/site/surefire-report.html
+```
+
+### Using IDE
+
+#### IntelliJ IDEA
+1. Right-click on `CalculatorUITest.java`
+2. Select "Run 'CalculatorUITest'"
+3. Or use keyboard shortcut: `Ctrl+Shift+F10` (Windows/Linux) or `Cmd+Shift+R` (Mac)
+
+#### Eclipse
+1. Right-click on `CalculatorUITest.java`
+2. Select "Run As" → "JUnit Test"
+
+#### Visual Studio Code
+1. Open the test file
+2. Click the "Run Test" button in the left margin
+3. Or use Command Palette: `Java: Run Tests`
+
+## Test Coverage Analysis
+
+### Current Coverage
+
+#### Methods Tested
+- ✅ `calculate(double, double, char)` - **Fully tested**
+
+#### Methods Not Tested
+- ❌ UI initialization methods (constructors, init methods)
+- ❌ Event handling logic
+- ❌ Theme application methods
+- ❌ Display formatting methods
+
+#### Operations Tested
+- ✅ Addition (`+`)
+- ✅ Subtraction (`-`)
+- ✅ Multiplication (`*`)
+- ✅ Division (`/`)
+- ✅ Modulus (`%`)
+- ✅ Power (`^`)
+
+#### Operations Not Tested
+- ❌ Square Root (`√`)
+- ❌ Natural Logarithm (`ln`)
+- ❌ Edge cases (division by zero, invalid operations)
+
+## Writing Additional Tests
+
+### Testing Best Practices
+
+#### 1. Test Method Naming
+Use descriptive names that indicate what is being tested:
+
+```java
+@Test
+void testCalculate_Addition_PositiveNumbers() { }
+
+@Test
+void testCalculate_Division_ByZero() { }
+
+@Test
+void testCalculate_InvalidOperator_ReturnsSecondNumber() { }
+```
+
+#### 2. Test Organization
+Group related tests and use `@Nested` for better organization:
+
+```java
+class CalculatorUITest {
+    
+    @Nested
+    class BasicOperationsTest {
+        @Test void testAddition() { }
+        @Test void testSubtraction() { }
+    }
+    
+    @Nested
+    class ScientificOperationsTest {
+        @Test void testSquareRoot() { }
+        @Test void testPower() { }
+    }
+    
+    @Nested
+    class EdgeCasesTest {
+        @Test void testDivisionByZero() { }
+        @Test void testInvalidOperator() { }
+    }
+}
+```
+
+#### 3. Parameterized Tests
+Use parameterized tests for multiple input combinations:
+
+```java
+@ParameterizedTest
+@ValueSource(doubles = {4.0, 9.0, 16.0, 25.0})
+void testSquareRoot_PerfectSquares(double input) {
+    double expected = Math.sqrt(input);
+    assertEquals(expected, calculatorUI.calculateSquareRoot(input), 0.001);
+}
+
+@ParameterizedTest
+@CsvSource({
+    "1.0, 0.0",
+    "2.718281828, 1.0", 
+    "7.389056099, 2.0"
+})
+void testNaturalLogarithm(double input, double expected) {
+    assertEquals(expected, calculatorUI.calculateLog(input), 0.001);
+}
+```
+
+### Suggested Additional Tests
+
+#### 1. Edge Cases for Core Operations
+
+```java
+@Test
+void testDivisionByZero_ReturnsInfinity() {
+    double result = calculatorUI.calculate(10.0, 0.0, '/');
+    assertEquals(Double.POSITIVE_INFINITY, result);
+}
+
+@Test  
+void testInvalidOperator_ReturnsSecondNumber() {
+    double result = calculatorUI.calculate(5.0, 3.0, 'x');
+    assertEquals(3.0, result);
+}
+
+@Test
+void testNegativeNumbers() {
+    assertEquals(-8.0, calculatorUI.calculate(-5.0, -3.0, '+'));
+    assertEquals(-2.0, calculatorUI.calculate(-5.0, -3.0, '-'));
+}
+```
+
+#### 2. Scientific Operations Tests
+
+```java
+@Test
+void testSquareRoot_ValidInput() {
+    // Note: This would require extending the public API
+    assertEquals(4.0, calculatorUI.calculateSquareRoot(16.0), 0.001);
+}
+
+@Test
+void testSquareRoot_NegativeInput_ReturnsNaN() {
+    double result = calculatorUI.calculateSquareRoot(-4.0);
+    assertTrue(Double.isNaN(result));
+}
+
+@Test
+void testPowerOperation_IntegerExponents() {
+    assertEquals(8.0, calculatorUI.calculate(2.0, 3.0, '^'));
+    assertEquals(1.0, calculatorUI.calculate(5.0, 0.0, '^'));
+}
+
+@Test
+void testNaturalLogarithm_ValidInput() {
+    assertEquals(0.0, calculatorUI.calculateLog(1.0), 0.001);
+    assertEquals(1.0, calculatorUI.calculateLog(Math.E), 0.001);
+}
+```
+
+#### 3. Precision Tests
+
+```java
+@Test
+void testDecimalPrecision() {
+    assertEquals(0.3, calculatorUI.calculate(0.1, 0.2, '+'), 0.000001);
+    assertEquals(0.09, calculatorUI.calculate(0.3, 0.3, '*'), 0.000001);
+}
+
+@Test
+void testLargeNumbers() {
+    double large1 = 1e15;
+    double large2 = 1e15;
+    assertEquals(2e15, calculatorUI.calculate(large1, large2, '+'), 1e10);
+}
+```
+
+#### 4. Theme Testing
+
+```java
+@Test
+void testThemeLoading() {
+    Map<String, Theme> themes = ThemeLoader.loadThemes();
+    assertFalse(themes.isEmpty());
+    assertTrue(themes.containsKey("Light"));
+    assertTrue(themes.containsKey("Dark"));
+}
+
+@Test
+void testColorConversion() {
+    Color red = ColorUtil.hex2Color("ff0000");
+    assertEquals(255, red.getRed());
+    assertEquals(0, red.getGreen());
+    assertEquals(0, red.getBlue());
+}
+
+@Test
+void testInvalidColorConversion() {
+    Color invalid = ColorUtil.hex2Color(null);
+    assertNull(invalid);
+}
+```
+
+## Mock Testing for UI Components
+
+### Testing UI Interactions
+For testing UI interactions without creating actual windows:
+
+```java
+@ExtendWith(MockitoExtension.class)
+class CalculatorUITest {
+    
+    @Mock
+    private JFrame mockWindow;
+    
+    @Mock  
+    private JTextField mockInputScreen;
+    
+    @Test
+    void testButtonClickUpdatesDisplay() {
+        // This would require refactoring to inject dependencies
+        // Currently not easily testable due to tight coupling
+    }
+}
+```
+
+### Refactoring for Testability
+To improve testability, consider:
+
+1. **Dependency Injection**: Inject UI components for mocking
+2. **Separate Business Logic**: Extract calculation logic to separate class
+3. **Observer Pattern**: Use listeners for UI updates
+
+## Performance Testing
+
+### Calculation Performance Tests
+
+```java
+@Test
+void testCalculationPerformance() {
+    long startTime = System.nanoTime();
+    
+    for (int i = 0; i < 10000; i++) {
+        calculatorUI.calculate(Math.random() * 1000, 
+                              Math.random() * 1000, '+');
+    }
+    
+    long endTime = System.nanoTime();
+    long duration = endTime - startTime;
+    
+    // Should complete 10,000 calculations in under 10ms
+    assertTrue(duration < 10_000_000, "Performance test failed");
+}
+```
+
+### Memory Usage Tests
+
+```java
+@Test
+void testMemoryUsage() {
+    Runtime runtime = Runtime.getRuntime();
+    long initialMemory = runtime.totalMemory() - runtime.freeMemory();
+    
+    // Create multiple calculator instances
+    List<CalculatorUI> calculators = new ArrayList<>();
+    for (int i = 0; i < 100; i++) {
+        calculators.add(new CalculatorUI());
+    }
+    
+    long usedMemory = runtime.totalMemory() - runtime.freeMemory();
+    long memoryIncrease = usedMemory - initialMemory;
+    
+    // Should not use excessive memory
+    assertTrue(memoryIncrease < 50_000_000, "Memory usage too high");
+}
+```
+
+## Integration Testing
+
+### Theme Integration Tests
+
+```java
+@Test
+void testThemeApplicationIntegration() {
+    Map<String, Theme> themes = ThemeLoader.loadThemes();
+    Theme lightTheme = themes.get("Light");
+    
+    assertNotNull(lightTheme);
+    assertNotNull(lightTheme.getApplicationBackground());
+    
+    // Test that colors are valid hex strings
+    assertTrue(lightTheme.getApplicationBackground().matches("[0-9A-Fa-f]{6}"));
+}
+```
+
+### End-to-End Testing
+
+```java
+@Test
+void testCompleteCalculationWorkflow() {
+    // This would require UI automation tools like TestFX
+    // Currently not implemented due to complexity
+}
+```
+
+## Test Data Management
+
+### Using External Test Data
+
+```java
+@ParameterizedTest
+@CsvFileSource(resources = "/test-data/calculations.csv", numLinesToSkip = 1)
+void testCalculationsFromFile(double first, double second, 
+                              char operator, double expected) {
+    assertEquals(expected, 
+        calculatorUI.calculate(first, second, operator), 0.001);
+}
+```
+
+Example `calculations.csv`:
+```csv
+first,second,operator,expected
+1.0,1.0,+,2.0
+10.0,2.0,/,5.0
+2.0,3.0,^,8.0
+```
+
+## Continuous Integration
+
+### Maven Surefire Configuration
+
+```xml
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-plugin</artifactId>
+    <version>3.0.0-M9</version>
+    <configuration>
+        <includes>
+            <include>**/*Test.java</include>
+        </includes>
+        <reportFormat>xml</reportFormat>
+    </configuration>
+</plugin>
+```
+
+### GitHub Actions Example
+
+```yaml
+name: Run Tests
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+    - name: Run tests
+      run: mvn test
+    - name: Generate test report
+      run: mvn surefire-report:report
+```
+
+## Testing Tools and Utilities
+
+### Recommended Testing Libraries
+
+#### AssertJ (Enhanced Assertions)
+```xml
+<dependency>
+    <groupId>org.assertj</groupId>
+    <artifactId>assertj-core</artifactId>
+    <version>3.24.2</version>
+    <scope>test</scope>
+</dependency>
+```
+
+Usage:
+```java
+import static org.assertj.core.api.Assertions.*;
+
+@Test
+void testWithAssertJ() {
+    double result = calculatorUI.calculate(2.0, 3.0, '+');
+    assertThat(result).isEqualTo(5.0);
+    assertThat(result).isPositive();
+    assertThat(result).isBetween(4.0, 6.0);
+}
+```
+
+#### Mockito (Mocking Framework)
+```xml
+<dependency>
+    <groupId>org.mockito</groupId>
+    <artifactId>mockito-core</artifactId>
+    <version>5.1.1</version>
+    <scope>test</scope>
+</dependency>
+```
+
+### Test Coverage Tools
+
+#### JaCoCo Maven Plugin
+```xml
+<plugin>
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>0.8.8</version>
+    <executions>
+        <execution>
+            <goals>
+                <goal>prepare-agent</goal>
+            </goals>
+        </execution>
+        <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+                <goal>report</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
+
+Generate coverage report:
+```bash
+mvn clean test jacoco:report
+# Report available in target/site/jacoco/index.html
+```
+
+## Debugging Tests
+
+### Running Tests in Debug Mode
+
+#### IntelliJ IDEA
+1. Right-click test method
+2. Select "Debug 'testMethodName'"
+3. Set breakpoints in test or source code
+
+#### Command Line with Maven
+```bash
+mvn -Dmaven.surefire.debug test
+# Waits for debugger connection on port 5005
+```
+
+### Logging in Tests
+
+```java
+@Test
+void testWithLogging() {
+    System.out.println("Starting calculation test");
+    
+    double result = calculatorUI.calculate(5.0, 3.0, '+');
+    
+    System.out.println("Result: " + result);
+    assertEquals(8.0, result);
+}
+```
+
+## Best Practices Summary
+
+1. **Test Early and Often**: Write tests during development
+2. **Test Isolation**: Each test should be independent
+3. **Clear Test Names**: Use descriptive method names
+4. **Test Edge Cases**: Include boundary conditions and error cases
+5. **Use Parameterized Tests**: Test multiple inputs efficiently
+6. **Mock External Dependencies**: Use mocking for complex dependencies
+7. **Measure Coverage**: Aim for high code coverage
+8. **Performance Testing**: Include performance benchmarks
+9. **Continuous Integration**: Run tests automatically on code changes
+10. **Documentation**: Document complex test scenarios
