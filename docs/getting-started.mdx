@@ -1,0 +1,196 @@
+# Getting Started
+
+This guide will help you get the Calculator application up and running on your local machine.
+
+## Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+### Java Development Kit (JDK)
+- **Version**: Java 11 or higher
+- **Download**: [OpenJDK](https://openjdk.org/) or [Oracle JDK](https://www.oracle.com/java/technologies/downloads/)
+
+To verify your Java installation:
+```bash
+java -version
+javac -version
+```
+
+### Apache Maven (Optional but Recommended)
+- **Version**: 3.6 or higher
+- **Download**: [Apache Maven](https://maven.apache.org/download.cgi)
+
+To verify your Maven installation:
+```bash
+mvn -version
+```
+
+## Installation
+
+### Option 1: Clone from GitHub
+```bash
+# Clone the repository
+git clone https://github.com/HouariZegai/Calculator.git
+
+# Navigate to the project directory
+cd Calculator
+```
+
+### Option 2: Download ZIP
+1. Go to the [GitHub repository](https://github.com/HouariZegai/Calculator)
+2. Click the "Code" button and select "Download ZIP"
+3. Extract the ZIP file to your desired location
+
+## Running the Application
+
+### Using Maven (Recommended)
+```bash
+# Compile the project
+mvn compile
+
+# Run the application
+mvn exec:java -Dexec.mainClass="com.houarizegai.calculator.App"
+```
+
+### Using Java directly
+```bash
+# Compile the source files
+javac -cp "src/main/java" -d target/classes src/main/java/com/houarizegai/calculator/*.java src/main/java/com/houarizegai/calculator/**/*.java
+
+# Add dependencies to classpath (you'll need to download Jackson libraries)
+# For simplicity, use Maven approach above
+
+# Run the application
+java -cp target/classes com.houarizegai.calculator.App
+```
+
+### Using an IDE
+
+#### IntelliJ IDEA
+1. Open IntelliJ IDEA
+2. Select "Open" or "Import Project"
+3. Navigate to the Calculator directory and select it
+4. IntelliJ will automatically detect the Maven project
+5. Wait for the project to be indexed
+6. Right-click on `App.java` and select "Run 'App.main()'"
+
+#### Eclipse
+1. Open Eclipse
+2. Go to File → Import → Existing Maven Projects
+3. Select the Calculator directory
+4. Eclipse will import the project
+5. Right-click on `App.java` and select "Run As → Java Application"
+
+#### Visual Studio Code
+1. Open VS Code
+2. Install the "Java Extension Pack" if not already installed
+3. Open the Calculator folder
+4. VS Code will automatically detect the Java project
+5. Press `F5` or use the Run button to start the application
+
+## Building the Project
+
+### Compile Only
+```bash
+mvn compile
+```
+
+### Run Tests
+```bash
+mvn test
+```
+
+### Package JAR file
+```bash
+mvn package
+```
+This creates a JAR file in the `target/` directory.
+
+### Clean Build
+```bash
+mvn clean compile
+```
+
+## First Launch
+
+When you run the application for the first time:
+
+1. **Calculator Window**: A calculator window will open with the default Light theme
+2. **Calculator Type**: You can switch between "Standard" and "Scientific" modes using the dropdown
+3. **Theme Selection**: Use the theme dropdown to switch between Light and Dark themes
+4. **Basic Operations**: Start with simple calculations like `2 + 3 =`
+
+## Project Structure
+
+After installation, your project structure should look like this:
+
+```
+Calculator/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/houarizegai/calculator/
+│   │   │       ├── App.java
+│   │   │       ├── ui/
+│   │   │       ├── theme/
+│   │   │       └── util/
+│   │   └── resources/
+│   │       └── application.yaml
+│   └── test/
+│       └── java/
+├── target/ (created after compilation)
+├── screenshots/
+├── docs/
+├── pom.xml
+├── README.md
+└── LICENSE
+```
+
+## Troubleshooting
+
+### Common Issues
+
+#### Java Version Error
+**Problem**: `Error: A JNI error has occurred` or version compatibility issues
+**Solution**: Ensure you're using Java 11 or higher
+
+#### Maven Not Found
+**Problem**: `'mvn' is not recognized as an internal or external command`
+**Solution**: 
+1. Install Maven or add it to your PATH
+2. Alternatively, use your IDE's built-in Maven support
+
+#### Missing Dependencies
+**Problem**: `ClassNotFoundException` for Jackson libraries
+**Solution**: Use Maven to handle dependencies automatically:
+```bash
+mvn dependency:resolve
+```
+
+#### Theme Loading Issues
+**Problem**: Calculator appears with default colors, themes not working
+**Solution**: Ensure `application.yaml` is in the correct location (`src/main/resources/`)
+
+### Performance Tips
+
+1. **Memory**: The application uses minimal memory, but ensure you have at least 64MB free RAM
+2. **Display**: Works best with screen resolution 800x600 or higher
+3. **Java Performance**: Use the latest Java version for best performance
+
+## Next Steps
+
+Now that you have the Calculator running:
+
+1. Explore the [Features](./features.mdx) to learn about all available functionality
+2. Check out the [Architecture](./architecture.mdx) to understand the codebase
+3. Learn about [Theming](./theming.mdx) to customize the appearance
+4. Review the [API Reference](./api.mdx) if you want to extend the application
+
+## Getting Help
+
+If you encounter issues:
+
+1. Check the [Troubleshooting](#troubleshooting) section above
+2. Review the project's [GitHub Issues](https://github.com/HouariZegai/Calculator/issues)
+3. Create a new issue if your problem isn't already reported
+4. Include your Java version, operating system, and error messages in any bug reports

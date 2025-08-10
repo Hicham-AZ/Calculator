@@ -1,0 +1,416 @@
+# Architecture
+
+This document provides a comprehensive overview of the Calculator application's architecture, design patterns, and technical implementation.
+
+## Architecture Overview
+
+The Calculator follows a **layered architecture** with clear separation of concerns:
+
+```
+┌─────────────────────────────────────────┐
+│           Presentation Layer            │
+│        (CalculatorUI.java)              │
+├─────────────────────────────────────────┤
+│           Application Layer             │
+│          (App.java)                     │
+├─────────────────────────────────────────┤
+│           Business Logic Layer          │
+│    (Calculate methods, State mgmt)      │
+├─────────────────────────────────────────┤
+│           Data Access Layer             │
+│      (ThemeLoader, YAML config)        │
+├─────────────────────────────────────────┤
+│           Utility Layer                 │
+│         (ColorUtil)                     │
+└─────────────────────────────────────────┘
+```
+
+## Package Structure
+
+### Core Packages
+```
+com.houarizegai.calculator/
+├── App.java                    # Application entry point
+├── ui/
+│   └── CalculatorUI.java       # Main UI component
+├── theme/
+│   ├── ThemeLoader.java        # Theme loading logic
+│   └── properties/
+│       ├── Theme.java          # Theme data model
+│       └── ThemeList.java      # Theme collection model
+└── util/
+    └── ColorUtil.java          # Color conversion utilities
+```
+
+## Design Patterns
+
+### 1. Model-View Pattern
+The application follows a simplified Model-View pattern:
+
+- **Model**: `Theme`, `ThemeList` classes represent data
+- **View**: `CalculatorUI` handles presentation and user interaction
+- **Controller Logic**: Embedded within `CalculatorUI` for simplicity
+
+### 2. Factory Pattern (Implicit)
+Theme creation and button creation follow factory-like patterns:
+
+```java
+// Button creation factory method
+private JButton createButton(String label, int x, int y) {
+    JButton btn = new JButton(label);
+    btn.setBounds(x, y, BUTTON_WIDTH, BUTTON_HEIGHT);
+    btn.setFont(new Font("Comic Sans MS", Font.PLAIN, 28));
+    // ... configuration
+    return btn;
+}
+```
+
+### 3. Data Transfer Object (DTO)
+`Theme` class acts as a DTO for theme configuration:
+
+```java
+public class Theme {
+    private String name;
+    private String applicationBackground;
+    private String textColor;
+    // ... other properties
+}
+```
+
+### 4. Static Factory Methods
+Utility classes use static factory methods:
+
+```java
+public class ColorUtil {
+    public static Color hex2Color(String colorHex) {
+        // Color conversion logic
+    }
+}
+```
+
+## Component Architecture
+
+### 1. Application Entry Point
+
+#### App.java
+```java
+public class App {
+    public static void main(String[] args) {
+        new CalculatorUI();
+    }
+}
+```
+
+**Responsibilities:**
+- Bootstrap the application
+- Initialize the main UI component
+- Single entry point following SRP (Single Responsibility Principle)
+
+### 2. User Interface Component
+
+#### CalculatorUI.java (586 lines)
+The main UI component handling:
+
+**Core Responsibilities:**
+- UI layout and component management
+- Event handling for all calculator operations  
+- State management for calculations
+- Theme application and switching
+- Calculator mode switching (Standard/Scientific)
+
+**Key Methods:**
+```java
+// Core calculation engine
+public double calculate(double firstNumber, double secondNumber, char operator)
+
+// UI initialization
+private void initInputScreen(int[] columns, int[] rows)
+private void initButtons(int[] columns, int[] rows)
+private void initCalculatorTypeSelector()
+private void initThemeSelector()
+
+// Theme management
+private void applyTheme(Theme theme)
+
+// Helper methods
+private JButton createButton(String label, int x, int y)
+private JComboBox<String> createComboBox(...)
+```
+
+**State Variables:**
+```java
+private char selectedOperator = ' ';    // Current operation
+private boolean go = true;              // Ready for next operation
+private boolean addToDisplay = true;    // Append vs replace display
+private double typedValue = 0;         // Stored operand value
+```
+
+### 3. Theme Management System
+
+#### ThemeLoader.java
+```java
+public class ThemeLoader {
+    public static Map<String, Theme> loadThemes() {
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        // YAML parsing and theme loading
+    }
+}
+```
+
+**Responsibilities:**
+- Load themes from YAML configuration
+- Parse YAML using Jackson library
+- Convert to usable theme objects
+- Handle loading errors gracefully
+
+#### Theme.java & ThemeList.java
+Data models representing theme configuration:
+
+```java
+public class Theme {
+    // Theme properties with getters/setters
+}
+
+public class ThemeList {
+    private List<Theme> themes;
+    
+    public Map<String, Theme> getThemesAsMap() {
+        return themes.stream()
+            .collect(Collectors.toMap(Theme::getName, Function.identity()));
+    }
+}
+```
+
+### 4. Utility Components
+
+#### ColorUtil.java
+```java
+public class ColorUtil {
+    public static Color hex2Color(String colorHex) {
+        return Optional.ofNullable(colorHex)
+            .map(hex -> new Color(
+                Integer.valueOf(colorHex.substring(0, 2), 16),
+                Integer.valueOf(colorHex.substring(2, 4), 16),
+                Integer.valueOf(colorHex.substring(4, 6), 16)))
+            .orElse(null);
+    }
+}
+```
+
+## Data Flow Architecture
+
+### 1. Application Startup Flow
+```
+App.main() → new CalculatorUI() → loadThemes() → initUI() → applyDefaultTheme()
+```
+
+### 2. User Interaction Flow
+```
+User Input → Event Handler → Update State → Update Display → Prepare for Next Input
+```
+
+### 3. Calculation Flow
+```
+Number Input → Operator Input → Second Number → Equals → calculate() → Display Result
+```
+
+### 4. Theme Change Flow
+```
+Theme Selection → applyTheme() → Update All Components → Repaint UI
+```
+
+## Technology Stack
+
+### Core Technologies
+- **Java**: 11+ (Language and runtime)
+- **Swing**: GUI framework
+- **Maven**: Build and dependency management
+- **JUnit 5**: Testing framework
+
+### Dependencies
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.fasterxml.jackson.dataformat</groupId>
+        <artifactId>jackson-dataformat-yaml</artifactId>
+        <version>2.14.2</version>
+    </dependency>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-params</artifactId>
+        <version>5.9.2</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+```
+
+## Configuration Management
+
+### YAML Configuration (application.yaml)
+```yaml
+themes:
+  - name: Light
+    applicationBackground: f0f3f9
+    textColor: "000000"
+    operatorBackground: f7f9fc
+    numbersBackground: ffffff
+    btnEqualTextColor: ffffff
+    btnEqualBackground: 0067c0
+  - name: Dark
+    applicationBackground: 1c2028
+    textColor: ffffff
+    operatorBackground: 2d333d
+    numbersBackground: 363c47
+    btnEqualTextColor: ffffff
+    btnEqualBackground: 4cc2ff
+```
+
+### Configuration Loading Strategy
+1. **Fail-safe Loading**: Returns empty map if YAML loading fails
+2. **Default Fallback**: Application works even without themes
+3. **Runtime Configuration**: Themes can be modified without recompilation
+
+## Event-Driven Architecture
+
+### Event Handling Pattern
+```java
+button.addActionListener(event -> {
+    // Input validation
+    if (!Pattern.matches(REGEX, inputScreen.getText()))
+        return;
+    
+    // State updates
+    updateCalculatorState();
+    
+    // UI updates
+    updateDisplay();
+    
+    // Prepare for next input
+    setNextInputState();
+});
+```
+
+### Event Types
+1. **Number Input Events**: Update display and state
+2. **Operator Events**: Store operation and operand
+3. **Equals Events**: Perform calculation and show result
+4. **Clear Events**: Reset calculator state
+5. **Theme Events**: Apply new theme to all components
+6. **Mode Events**: Switch between Standard/Scientific
+
+## State Management
+
+### Calculator State Machine
+```
+State Variables:
+- selectedOperator: Current operation (+, -, *, /, %, ^, √, l)
+- typedValue: First operand storage
+- go: Ready for calculation flag  
+- addToDisplay: Display mode (append vs replace)
+
+State Transitions:
+Number Input → Ready for Operator
+Operator Input → Awaiting Second Operand  
+Second Number → Ready for Calculation
+Equals → Display Result → Ready for Next
+```
+
+### State Validation
+- Input validation using regex patterns
+- State consistency checks before calculations
+- Error recovery mechanisms
+
+## Memory Management
+
+### Object Lifecycle
+1. **Application Lifecycle**: Single instance of CalculatorUI
+2. **Theme Objects**: Loaded once at startup, reused
+3. **UI Components**: Created once, updated via theme changes
+4. **Calculation State**: Primitive values, minimal memory footprint
+
+### Resource Management
+- **YAML Loading**: One-time loading with error handling
+- **Color Objects**: Created on-demand, cached by JVM
+- **Event Listeners**: Lightweight lambda expressions
+
+## Error Handling Strategy
+
+### Exception Handling
+```java
+try {
+    ThemeList themeList = mapper.readValue(
+        new File("src/main/resources/application.yaml"), 
+        ThemeList.class
+    );
+    return themeList.getThemesAsMap();
+} catch (IOException e) {
+    return Collections.emptyMap(); // Graceful degradation
+}
+```
+
+### Input Validation
+- **Regex Patterns**: Validate numeric input
+- **State Checking**: Prevent invalid operations
+- **Division by Zero**: Handled by Java's double arithmetic
+
+## Performance Considerations
+
+### UI Performance
+- **Layout**: Absolute positioning for predictable rendering
+- **Painting**: Minimal repaints, only when necessary
+- **Event Processing**: Lightweight event handlers
+
+### Memory Efficiency
+- **Static Constants**: Reduce object creation
+- **Primitive Types**: Use primitives for calculations
+- **String Handling**: Minimal string concatenation
+
+### Calculation Performance
+- **Native Operations**: Java's built-in arithmetic
+- **Double Precision**: Standard IEEE 754 double precision
+- **Minimal Overhead**: Direct calculation without unnecessary abstractions
+
+## Extensibility Points
+
+### Adding New Operations
+1. Add button in `initButtons()`
+2. Implement calculation logic in `calculate()`
+3. Add operator handling in event listeners
+
+### Adding New Themes
+1. Add theme configuration to `application.yaml`
+2. Themes are loaded automatically
+3. No code changes required
+
+### Adding New UI Components
+1. Create in initialization methods
+2. Add to theme application logic
+3. Handle events appropriately
+
+## Testing Architecture
+
+### Test Structure
+```java
+@ParameterizedTest
+@CsvSource({"3,5,+,8", "2,8,-,-6", "44.5,10,*,445"})
+void testCalculation(double first, double second, char operator, double expected) {
+    assertEquals(expected, calculatorUI.calculate(first, second, operator));
+}
+```
+
+### Testing Strategy
+- **Unit Tests**: Core calculation logic
+- **Parameterized Tests**: Multiple input scenarios
+- **Isolated Testing**: Test calculation logic independently from UI
+
+## Security Considerations
+
+### Input Security
+- **Regex Validation**: Prevents injection attacks via input
+- **Type Safety**: Strong typing prevents type confusion
+- **Resource Loading**: Controlled file access for themes
+
+### Code Security
+- **Encapsulation**: Private methods and fields
+- **Immutability**: Final fields where appropriate
+- **Error Handling**: No sensitive information in exceptions
