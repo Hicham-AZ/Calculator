@@ -1,0 +1,189 @@
+# Features
+
+The Calculator application offers a comprehensive set of features for both basic and advanced mathematical operations.
+
+## Calculator Modes
+
+### Standard Mode
+
+The standard calculator mode provides all essential arithmetic operations needed for everyday calculations.
+
+#### Available Operations
+- **Addition (+)**: Add two or more numbers
+- **Subtraction (-)**: Subtract numbers, supports negative numbers
+- **Multiplication (*)**: Multiply numbers with decimal precision
+- **Division (/)**: Divide numbers with proper error handling for division by zero
+- **Modulus (%)**: Calculate remainder of division operations
+- **Decimal Point (.)**: Support for decimal numbers
+- **Clear (C)**: Reset calculator to initial state
+- **Backspace (←)**: Remove the last entered digit
+
+#### Features
+- **Number Input**: Supports both integers and decimal numbers
+- **Continuous Operations**: Chain multiple operations together
+- **Input Validation**: Prevents invalid input using regex patterns
+- **Result Display**: Automatic formatting of results (removes trailing zeros for integers)
+
+### Scientific Mode
+
+Scientific mode extends the calculator with advanced mathematical functions.
+
+#### Additional Operations
+- **Square Root (√)**: Calculate square root of a number
+- **Power (pow)**: Raise numbers to any power (x^y)
+- **Natural Logarithm (ln)**: Calculate natural logarithm of a number
+
+#### Mode Switching
+- Switch between Standard and Scientific modes via dropdown
+- Dynamic UI resizing (Standard: 410x600px, Scientific: 490x600px)
+- Scientific buttons are hidden in Standard mode for cleaner interface
+
+## User Interface Features
+
+### Dynamic Layout
+- **Responsive Design**: UI adapts to calculator mode
+- **Fixed Layout**: Buttons positioned precisely for optimal user experience
+- **Font Consistency**: Comic Sans MS font throughout the application
+- **Cursor Feedback**: Hand cursor on interactive elements
+
+### Input Display
+- **Large Display**: 350x70px input field with 33pt font
+- **Real-time Updates**: Display updates as you type
+- **Read-only Field**: Prevents direct text input, calculator buttons only
+- **Clear Formatting**: Easy-to-read number display
+
+### Navigation
+- **Dropdown Selectors**: Easy switching between modes and themes
+- **Tooltips**: Helpful tooltips on dropdown menus
+- **Keyboard-like Layout**: Familiar calculator button arrangement
+
+## Theming System
+
+### Built-in Themes
+
+#### Light Theme
+- **Background**: Light gray (#f0f3f9)
+- **Text Color**: Black (#000000)
+- **Numbers**: White background (#ffffff)
+- **Operators**: Light blue background (#f7f9fc)
+- **Equal Button**: Blue background (#0067c0) with white text
+
+#### Dark Theme
+- **Background**: Dark gray (#1c2028)
+- **Text Color**: White (#ffffff)
+- **Numbers**: Dark background (#363c47)
+- **Operators**: Medium dark background (#2d333d)
+- **Equal Button**: Light blue background (#4cc2ff) with white text
+
+### Theme Features
+- **Runtime Switching**: Change themes without restarting
+- **Comprehensive Coverage**: All UI elements are themed
+- **YAML Configuration**: Easy theme modification and addition
+- **Automatic Loading**: Themes loaded from application.yaml on startup
+
+## Calculation Engine
+
+### Arithmetic Operations
+```java
+// Supported operations with examples
+Addition:       2 + 3 = 5
+Subtraction:    8 - 2 = 6  
+Multiplication: 4 * 5 = 20
+Division:       20 / 4 = 5
+Modulus:        7 % 3 = 1
+Power:          2 ^ 3 = 8
+Square Root:    √16 = 4
+Natural Log:    ln(e) = 1
+```
+
+### Advanced Features
+- **Chained Operations**: Perform multiple operations in sequence
+- **Operator Precedence**: Proper handling of operation order
+- **Decimal Precision**: Accurate decimal calculations
+- **Error Handling**: Graceful handling of invalid operations
+- **Input Validation**: Regex-based input validation
+
+### State Management
+- **Operation State**: Tracks current operation and operands
+- **Display State**: Manages when to append or replace display
+- **Calculation State**: Handles continuous calculations
+
+## Input Validation
+
+### Number Format Validation
+The calculator uses sophisticated regex patterns for input validation:
+
+```java
+// Regex pattern for valid numbers
+"([-]?\\d+[.]\\d*)|(\\d+)|(-\\d+)"
+```
+
+This pattern supports:
+- **Positive integers**: `123`
+- **Negative integers**: `-456`
+- **Positive decimals**: `12.34`
+- **Negative decimals**: `-56.78`
+- **Leading zeros**: Automatically handled
+
+### Error Prevention
+- **Invalid Input Rejection**: Non-numeric input is ignored
+- **Decimal Point Control**: Only one decimal point per number
+- **Operator Chaining**: Prevents invalid operator sequences
+- **Division by Zero**: Handled gracefully (returns infinity)
+
+## Accessibility Features
+
+### User Experience
+- **Visual Feedback**: Button states and hover effects
+- **Clear Visual Hierarchy**: Distinct styling for different button types
+- **Consistent Sizing**: All buttons are 80x70px for easy clicking
+- **Readable Fonts**: Large, clear font sizes throughout
+
+### Keyboard-like Interface
+- **Familiar Layout**: Traditional calculator button arrangement
+- **Logical Grouping**: Numbers, operators, and functions clearly separated
+- **Equal Button**: Prominently sized (170x70px) for easy access
+
+## Technical Features
+
+### Performance
+- **Lightweight**: Minimal memory footprint
+- **Fast Calculations**: Immediate response to user input
+- **Efficient Rendering**: Swing-based UI with optimized updates
+- **Cross-platform**: Runs on Windows, macOS, and Linux
+
+### Extensibility
+- **Modular Design**: Easy to add new operations
+- **Theme System**: Simple to add new themes
+- **Clean Architecture**: Well-separated concerns for maintenance
+- **Configuration-driven**: Themes and settings externalized
+
+## Limitations and Considerations
+
+### Current Limitations
+- **Single Window**: One calculator instance at a time
+- **No History**: Previous calculations are not stored
+- **Limited Scientific Functions**: Basic scientific operations only
+- **No Memory Functions**: M+, M-, MR, MC not implemented
+
+### Future Enhancement Opportunities
+- **Calculation History**: Store and recall previous calculations
+- **Memory Functions**: Add standard calculator memory operations  
+- **More Scientific Functions**: Trigonometric functions, constants
+- **Keyboard Input**: Support for keyboard number entry
+- **Copy/Paste**: Clipboard integration for results
+
+## Usage Tips
+
+### Best Practices
+1. **Clear Before New Calculations**: Use 'C' to start fresh calculations
+2. **Check Display**: Verify numbers before pressing operators
+3. **Use Backspace**: Correct single digit mistakes with '←'
+4. **Chain Operations**: Take advantage of continuous calculation support
+5. **Theme Selection**: Choose theme based on lighting conditions
+
+### Common Use Cases
+- **Basic Arithmetic**: Everyday calculations like tips, taxes, measurements
+- **Scientific Calculations**: Square roots, powers, logarithms for STEM work
+- **Financial Calculations**: Percentages, interest calculations
+- **Engineering**: Quick calculations during technical work

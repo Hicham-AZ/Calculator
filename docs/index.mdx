@@ -1,0 +1,96 @@
+# Calculator Documentation
+
+Welcome to the Calculator project documentation! This is a Java Swing-based calculator application with advanced theming support and both standard and scientific calculation modes.
+
+## Overview
+
+The Calculator is a desktop application built using Java Swing that provides:
+
+- **Standard Calculator Mode**: Basic arithmetic operations (+, -, *, /, %)
+- **Scientific Calculator Mode**: Advanced functions (√, power, natural logarithm)
+- **Dynamic Theming**: Light and Dark themes with YAML configuration
+- **Clean Architecture**: Well-structured codebase with separation of concerns
+- **Comprehensive Testing**: Unit tests for calculation logic
+
+![Calculator Screenshots](../screenshots/scientific-dark.png)
+
+## Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/HouariZegai/Calculator.git
+
+# Navigate to project directory
+cd Calculator
+
+# Run with Maven
+mvn compile exec:java -Dexec.mainClass="com.houarizegai.calculator.App"
+```
+
+## Project Structure
+
+```
+Calculator/
+├── src/
+│   ├── main/
+│   │   ├── java/com/houarizegai/calculator/
+│   │   │   ├── App.java                    # Main entry point
+│   │   │   ├── ui/CalculatorUI.java        # Main UI component
+│   │   │   ├── theme/                      # Theme management
+│   │   │   │   ├── ThemeLoader.java
+│   │   │   │   └── properties/
+│   │   │   │       ├── Theme.java
+│   │   │   │       └── ThemeList.java
+│   │   │   └── util/ColorUtil.java         # Utility classes
+│   │   └── resources/application.yaml      # Theme configurations
+│   └── test/                               # Unit tests
+├── screenshots/                            # Application screenshots
+├── pom.xml                                 # Maven configuration
+└── docs/                                   # Documentation
+```
+
+## Key Features
+
+### 🧮 Dual Calculator Modes
+- **Standard Mode**: Essential arithmetic operations for everyday calculations
+- **Scientific Mode**: Advanced mathematical functions for complex calculations
+
+### 🎨 Theming System
+- YAML-based theme configuration
+- Light and Dark themes included
+- Customizable colors for all UI components
+- Runtime theme switching
+
+### 🏗️ Architecture
+- Clean separation of concerns
+- Modular design with dedicated packages
+- Utility classes for common operations
+- Comprehensive error handling
+
+### 🧪 Testing
+- JUnit 5 parameterized tests
+- Coverage of core calculation logic
+- Test-driven development approach
+
+## Navigation
+
+- [Getting Started](./getting-started.mdx) - Installation and setup instructions
+- [Features](./features.mdx) - Detailed feature documentation
+- [Architecture](./architecture.mdx) - Technical architecture overview
+- [Theming](./theming.mdx) - Theme system and customization
+- [API Reference](./api.mdx) - Code API documentation
+- [Testing](./testing.mdx) - Testing guide and best practices
+
+## Requirements
+
+- **Java**: 11 or higher
+- **Maven**: 3.6+ (for building)
+- **Operating System**: Cross-platform (Windows, macOS, Linux)
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](../LICENSE) file for details.
+
+## Contributing
+
+Contributions are welcome! Please read our contributing guidelines and feel free to submit pull requests or open issues for bugs and feature requests.
