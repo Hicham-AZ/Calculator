@@ -1,34 +1,32 @@
 ##############################
 # STAGE 1: Build with Maven
 ##############################
-FROM maven:3.9.6-eclipse-temurin-11 AS build
+FROM maven:3.9.6-eclipse-temurin-11 AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy source code
+# Copy project files
 COPY pom.xml .
 COPY src ./src
 
-# Build fat JAR using Maven Shade plugin
+# Build using Maven (fat jar produced by shade plugin)
 RUN mvn clean package -DskipTests
 
 
 ##############################
-# STAGE 2: Run the application
+# STAGE 2: Run Application
 ##############################
 FROM eclipse-temurin:11-jdk
 
 WORKDIR /app
 
-# Install required GUI libraries for Java Swing inside Docker
+# Install required GUI libraries for Swing
 RUN apt-get update && apt-get install -y \
     libxext6 libxrender1 libxtst6 libxi6 && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy the fat JAR from the build stage
-COPY --from=build /app/target/Calculator-1.0-SNAPSHOT.jar app.jar
+# Copy the shaded JAR using exact jar name
+COPY --from=builder /app/target/Calculator-1.0-SNAPSHOT.jar app.jar
 
-# Default command to run your Java GUI application
 CMD ["java", "-jar", "app.jar"]
 
